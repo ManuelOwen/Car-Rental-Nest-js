@@ -1,0 +1,57 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  Search,
+  ParseIntPipe,
+  Put,
+} from '@nestjs/common';
+import { GuestUsersService } from './guest_users.service';
+import { CreateGuestUserDto,UpdateGuestUserDto } from './dto';
+
+
+@Controller('guest-users')
+export class GuestUsersController {
+  constructor(private readonly guestUsersService: GuestUsersService) {}
+// create a neaw guest
+  @Post()
+  create(@Body() createGuestUserDto: CreateGuestUserDto) {
+    return this.guestUsersService.create(createGuestUserDto);
+  }
+// getting all guests
+  @Get()
+  findAll(@Query('search')Search?:string) {
+    return this.guestUsersService.findAll();
+  }
+// getting guest by id
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id:number) {
+    return this.guestUsersService.findOne(id);
+  }
+
+  // @Patch(':id')
+  // update(
+  //   @Param('id',ParseIntPipe) id:number,
+  //   @Body() updateGuestUserDto: UpdateGuestUserDto,
+  // ) {
+  //   return this.guestUsersService.update(id, updateGuestUserDto);
+  // }
+
+  @Delete(':id')
+  deleteGuest(@Param('id', ParseIntPipe) id: number) {
+    return this.guestUsersService.deleteGuest(id);
+  }
+//  update guest by id
+@Put(':id')
+updateGuest(
+  @Param('id', ParseIntPipe) id: number,
+  @Body() updateGuestUserDto: UpdateGuestUserDto,
+) {
+  return this.guestUsersService.updateGuest(id, updateGuestUserDto);
+}
+}

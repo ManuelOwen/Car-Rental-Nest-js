@@ -4,7 +4,7 @@ export class IUser {
   password: string;
   first_name: string;
   last_name: string;
-  status: string;
+  status:boolean;
   phone_number: number;
   profile_picture: string;
   last_login: Date;
