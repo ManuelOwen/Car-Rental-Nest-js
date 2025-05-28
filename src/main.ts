@@ -19,7 +19,7 @@ async function bootstrap() {
     host: configService.get('DB_HOST'),
     port: configService.get('DB_PORT'),
     username: configService.get('DB_USER'),
-    database: configService.get('DB_DATABASE'),
+    database: configService.get('DB_NAME'),
     autoLoadEntities: configService.get('DB_AUTOLOAD'),
     synchronize: configService.get('DB_SYNC'),
   });

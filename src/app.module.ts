@@ -12,12 +12,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/db.config';
 @Module({
   imports: [
-    TypeOrmModule.forRoot(typeOrmConfig),
-      
-  
-    
-
-  DatabaseModule,
+        TypeOrmModule.forRoot(typeOrmConfig),
+        DatabaseModule,
   UsersModule,
   AdminModule,
   GuestUsersModule,

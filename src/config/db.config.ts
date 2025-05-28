@@ -13,4 +13,4 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   autoLoadEntities: true,
   synchronize: true, 
 };
-console.log(typeOrmConfig.password);
+// console.log(typeOrmConfig.password);
