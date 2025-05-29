@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { CreateGuestUserDto, } from './dto/create-guest_user.dto';
+import { CreateGuestUserDto } from './dto/create-guest_user.dto';
 import { UpdateGuestUserDto } from './dto/update-guest_user.dto';
 
 @Injectable()
 export class GuestUsersService {
-private guestUsers = [
+  private guestUsers = [
     {
       guest_id: 1,
       email: 'johndoe@gmail.com',
       first_name: 'John',
       last_name: 'Doe',
       phone_number: 1234567890,
-    
     },
     {
       guest_id: 2,
@@ -43,7 +42,7 @@ private guestUsers = [
     },
   ];
 
-// create guest user
+  // create guest user
   create(createGuestUserDto: CreateGuestUserDto) {
     const newGuestUser = {
       // guest_id: this.guestUsers.length + 1, // Auto-increment ID
@@ -53,30 +52,32 @@ private guestUsers = [
     return newGuestUser;
   }
 
-  findAll():CreateGuestUserDto[] {
- 
+  findAll(): CreateGuestUserDto[] {
     return this.guestUsers;
   }
 
   findOne(id: number): CreateGuestUserDto | undefined {
-    return this.guestUsers.find(user => user.guest_id === id);
+    return this.guestUsers.find((user) => user.guest_id === id);
   }
 
   updateGuest(id: number, updateGuestUserDto: UpdateGuestUserDto) {
-    const userIndex = this.guestUsers.findIndex(user => user.guest_id === id);
+    const userIndex = this.guestUsers.findIndex((user) => user.guest_id === id);
     if (userIndex !== -1) {
-      this.guestUsers[userIndex] = { ...this.guestUsers[userIndex], ...updateGuestUserDto };
+      this.guestUsers[userIndex] = {
+        ...this.guestUsers[userIndex],
+        ...updateGuestUserDto,
+      };
       return this.guestUsers[userIndex];
     }
   }
 
-//  delete guest user 
- deleteGuest(id:number):string{
-   const userIndex = this.guestUsers.findIndex(user => user.guest_id === id);
-   if (userIndex !== -1) {
-     this.guestUsers.splice(userIndex, 1);
-     return 'Guest user deleted successfully';
-   }
-   return 'Guest user not found';
- }
+  //  delete guest user
+  deleteGuest(id: number): string {
+    const userIndex = this.guestUsers.findIndex((user) => user.guest_id === id);
+    if (userIndex !== -1) {
+      this.guestUsers.splice(userIndex, 1);
+      return 'Guest user deleted successfully';
+    }
+    return 'Guest user not found';
+  }
 }

@@ -4,7 +4,7 @@ import { UpdateVehicleBrandDto } from './dto/update-vehicle_brand.dto';
 
 @Injectable()
 export class VehicleBrandService {
-private vehicleBrands = [
+  private vehicleBrands = [
     {
       brand_id: 1,
       brand_name: 'Toyota',
@@ -30,16 +30,15 @@ private vehicleBrands = [
       brand_name: 'Nissan',
       created_at: new Date(),
     },
-]
-
+  ];
 
   create(createVehicleBrandDto: CreateVehicleBrandDto) {
-    return createVehicleBrandDto
+    return createVehicleBrandDto;
   }
 
   findAll(search?: string) {
     if (search) {
-      return this.vehicleBrands.filter(brand =>
+      return this.vehicleBrands.filter((brand) =>
         brand.brand_name.toLowerCase().includes(search.toLowerCase()),
       );
     }
@@ -47,7 +46,7 @@ private vehicleBrands = [
   }
 
   findOne(id: number) {
-    return this.vehicleBrands.find(brand => brand.brand_id === id);
+    return this.vehicleBrands.find((brand) => brand.brand_id === id);
   }
 
   // update(id: number, updateVehicleBrandDto: UpdateVehicleBrandDto) {
@@ -61,14 +60,14 @@ private vehicleBrands = [
   //   }
   //   return null;
   // }
-  update(id:number, UpdateVehicleBrandDto:UpdateVehicleBrandDto){
-    return{id, ...UpdateVehicleBrandDto
-    };
+  update(id: number, UpdateVehicleBrandDto: UpdateVehicleBrandDto) {
+    return { id, ...UpdateVehicleBrandDto };
   }
 
-
   remove(id: number) {
-    const brandIndex = this.vehicleBrands.findIndex(brand => brand.brand_id === id);
+    const brandIndex = this.vehicleBrands.findIndex(
+      (brand) => brand.brand_id === id,
+    );
     if (brandIndex !== -1) {
       this.vehicleBrands.splice(brandIndex, 1);
       return { deleted: true };

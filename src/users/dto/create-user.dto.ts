@@ -1,7 +1,7 @@
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsEmail,
-  // IsNotEmpty,
   IsInt,
   IsNumber,
   IsBoolean,
@@ -26,5 +26,6 @@ export class CreateUserDto {
   @IsString()
   profile_picture: string;
   @IsDate()
+  @Type(() => Date)
   last_login: Date;
 }

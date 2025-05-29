@@ -1,123 +1,63 @@
 import { Injectable } from '@nestjs/common';
-// import { CreateUserDto } from './dto/create-user.dto';
+
 // import { UpdateUserDto } from './dto/update-user.dto';
-import { IUser } from './entities/user.entity';
+import { user } from './entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto';
 
 @Injectable()
-export class UsersService {
-  private users: IUser[] = [
-    {
-      user_id: 1,
-      email: 'john@gmail.com',
-      password: 'password',
-      first_name: 'john ',
-      last_name: 'doe',
-      status: true,
-      phone_number: 12345678,
-      profile_picture: './images',
-      last_login: new Date('2023-10-01T10:00:00Z'),
-    },
-    {
-      user_id: 2,
-      email: 'jane@gmail.com',
-      password: 'password',
-      first_name: 'jane ',
-      last_name: 'doe',
-      status: false,
-      phone_number: 12345679,
-      profile_picture: './images',
-      last_login: new Date('2023-10-01T10:00:00Z'),
-    },
-    {
-      user_id: 3,
-      email: 'jack@gmail.com',
-      password: 'password',
-      first_name: 'jack ',
-      last_name: 'doe',
-      status: true,
-      phone_number: 12345680,
-      profile_picture: './images',
-      last_login: new Date('2023-10-01T10:00:00Z'),
-    },
-    {
-      user_id: 4,
-      email: 'jill@gmail.com',
-      password: 'password',
-      first_name: 'jill ',
-      last_name: 'doe',
-      status: true,
-      phone_number: 12345681,
-      profile_picture: './images',
-      last_login: new Date('2023-10-01T10:00:00Z'),
-    },
-    {
-      user_id: 5,
-      email: 'jill@gmail.com',
-      password: 'password',
-      first_name: 'jill ',
-      last_name: 'doe',
-      status: true,
-      phone_number: 12345681,
-      profile_picture: './images',
-      last_login: new Date('2023-10-01T10:00:00Z'),
-    },
-    {
-      user_id: 6,
-      email: 'jack@gmail.com',
-      password: 'password',
-      first_name: 'jack ',
-      last_name: 'doe',
-      status: true,
-      phone_number: 12345680,
-      profile_picture: './images',
-      last_login: new Date('2023-10-01T10:00:00Z'),
-    },
-  ];
-  findAll(): IUser[] {
-    return this.users;
+export class userService {
+  constructor(
+    @InjectRepository(user)
+    private readonly userRepository: Repository<user>,
+  ) {}
+  // create a new user
+  async createUser(CreateUserDto: CreateUserDto): Promise<user> {
+    const user = this.userRepository.create(CreateUserDto);
+    console.log('saving user:', user);
+    return this.userRepository.save(user);
   }
-  searchUsers(query: string): IUser[] {
-    return this.users.filter(
-      (user) =>
-        user.first_name.toLowerCase().includes(query.toLowerCase()) ||
-        user.last_name.toLowerCase().includes(query.toLowerCase()) ||
-        user.email.toLowerCase().includes(query.toLowerCase()),
-    );
+  // get all users
+  async findAll(): Promise<user[]> {
+    return this.userRepository.find();
   }
-  getUserById(id: number): IUser | undefined {
-    return this.users.find((user) => user.user_id === id);
-  }
-  createUser(user: IUser): IUser {
-    const newUser: IUser = {
-      ...user,
-      user_id: this.users.length + 1,
-      last_login: new Date(),
-    };
-    this.users.push(newUser);
-    return newUser;
-  }
-  updateUser(id: number, userData: Partial<IUser>): IUser | undefined {
-    const userIndex = this.users.findIndex((user) => user.user_id === id);
-    if (userIndex === -1) {
-      return undefined;
+  // get user by id
+  async getUserById(id: number): Promise<user | null> {
+    if (!id || isNaN(id)) {
+      throw new Error('user not found');
     }
-    const updatedUser = { ...this.users[userIndex], ...userData };
-    this.users[userIndex] = updatedUser;
-    return updatedUser;
+    return this.userRepository.findOneBy({ user_id: id });
+  }
+  // update user
+  async updateUser(id: number, userData: Partial<user>): Promise<user | null> {
+    const userToUpdate = await this.userRepository.preload({
+      user_id: id,
+      ...userData,
+    });
+    if (!userToUpdate) {
+      return null;
+    }
+    return this.userRepository.save(userToUpdate);
   }
   // delete user
-  deleteUser(id: number): string {
-    const userIndex = this.users.findIndex((user) => user.user_id === id);
-    if (userIndex === -1) {
-      return 'User not found';
+  async deleteUser(id: number): Promise<string> {
+    const result = await this.userRepository.delete(id);
+    if (result.affected === 0) {
+      return `User with id ${id} not found`;
     }
-    this.users.splice(userIndex, 1);
-    return 'User deleted successfully';
+    return `User with id ${id} deleted successfully`;
   }
-  findUserByEmail(email: string): IUser | undefined {
-    return this.users.find((user) => user.email === email);
-  }
-  findUserByPhoneNumber(phoneNumber: number): IUser | undefined {
-    return this.users.find((user) => user.phone_number === phoneNumber);
+  // search users by email or name
+  searchUsers(q: string): Promise<user[]> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where(
+        'user.email LIKE :q OR user.first_name LIKE :q OR user.last_name LIKE :q',
+        {
+          q: `%${q}%`,
+        },
+      )
+      .getMany();
   }
 }
