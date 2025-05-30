@@ -3,6 +3,7 @@ import { SeedService } from './seed.service';
 // import { SeedController } from './seed.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Vehicle } from 'src/vehicle/entities/vehicle.entity';
+import { SeedController } from './seed.controller'; 
 import { VehicleBrand } from 'src/vehicle_brand/entities/vehicle_brand.entity';
 
 @Module({
