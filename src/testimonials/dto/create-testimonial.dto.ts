@@ -10,7 +10,7 @@ export class CreateTestimonialDto {
   @IsBoolean()
   status: boolean;
 
-  @IsString()   
+  @IsString()
   testimonial: string;
 
   @IsDate()

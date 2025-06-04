@@ -1,26 +1,26 @@
-@url=http://localhost:3000/users
+@url=http://localhost:3000
 
 ### GET USERS
-GET {{url}}/
+GET {{url}}/users
 
 ### GET USER BY ID
-GET {{url}}/1
+GET {{url}}/users/2
 
 ### create user
-POST {{url}}
-Content-Type: application/json
+POST {{url}}/seed
+# Content-Type: application/json
 
-{
- "user_id": 1,
-  "email": "mutaiadoe@gmail.com",
-  "password": "password123",
-  "first_name": "mat",
-  "last_name": "Doe",
-  "status": true,
-  "phone_number": 1234567890,
-  "profile_picture": "./images/jane_doe.jpg",
-  "last_login": "2023-10-01T10:00:00Z"
-}
+# {
+#  "user_id": 1,
+#   "email": "mutaiadoe@gmail.com",
+#   "password": "password123",
+#   "first_name": "mat",
+#   "last_name": "Doe",
+#   "status": true,
+#   "phone_number": 1234567890,
+#   "profile_picture": "./images/jane_doe.jpg",
+#   "last_login": "2023-10-01T10:00:00Z"
+# }
 
 ### update user
 PUT {{url}}/1

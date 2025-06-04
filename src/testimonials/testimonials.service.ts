@@ -41,7 +41,7 @@ export class TestimonialsService {
     });
     if (!testimonial) {
       throw new NotFoundException(`Testimonial with id ${id} not found`);
-      console.log('error')
+      console.log('error');
     }
     return this.testimonialRepository.save(testimonial);
   }
