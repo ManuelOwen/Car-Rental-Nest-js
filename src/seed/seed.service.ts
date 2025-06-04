@@ -103,19 +103,18 @@ export class SeedService {
     this.logger.log('Testimonials seeded successfully');
     // seed vehicles
     this.logger.log('Seeding vehicles...');
-    const vehicle = {
-      brand_id: 1,
-      vehicle_id: 1,
-      price_per_day: 50,
-      model: 'Corolla',
-      year: 2020,
-      color: 'Blue',
-      status: true,
-      availability: true,
-      created_at: new Date(),
-    };
-    const vehicles = [
-      vehicle,
+    // const vehicle = {
+    //   brand_id: 1,
+    //   vehicle_id: 1,
+    //   price_per_day: 50,
+    //   model: 'Corolla',
+    //   year: 2020,
+    //   color: 'Blue',
+    //   status: true,
+    //   availability: true,
+    //   created_at: new Date(),
+    // };
+    const vehicle = [
       {
         brand_id: 2,
         user_id: 2,
