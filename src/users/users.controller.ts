@@ -7,15 +7,18 @@ import {
   Delete,
   Query,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { userService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
 import { user } from './entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 // implement pipes
 import { ParseIntPipe } from '@nestjs/common';
 
+@UseGuards(AuthGuard('jwt')) 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: userService) {}
@@ -39,9 +42,8 @@ export class UsersController {
   }
   // create a new user
   @Post()
-  async createUser(@Body() user: CreateUserDto): Promise<user> {
-    console.log('Incoming user data:', user);
-    return this.usersService.createUser(user);
+  create(@Body() createUserDto: CreateUserDto): Promise<user> {
+    return this.usersService.createUser(createUserDto);
   }
   // update a user
   @Put(':id')

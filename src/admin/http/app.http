@@ -1,0 +1,35 @@
+@url=http://localhost:3000
+
+### GET ADMIN USERS
+GET {{url}}/admin
+
+### GET ADMIN USER BY ID
+GET {{url}}/admin/2
+
+### create admin user
+POST {{url}}/admin
+Content-Type: application/json
+
+{
+    "admin_id": 1,
+  "email": "iman@gmail.com",
+  "password": "password123",
+  "username": "mat",
+ 
+  "last_login": "2023-10-01T10:00:00Z"
+}
+
+### update admin user
+PUT {{url}}/admin/1
+Content-Type: application/json
+
+{
+  "admin_id": 1,
+  "email": "iman@gmail.com",
+  "password": "password123",
+  "username": "mat",
+ 
+  "last_login": "2023-10-01T10:00:00Z"
+}
+### delete admin user
+DELETE {{url}}/admin/users/1

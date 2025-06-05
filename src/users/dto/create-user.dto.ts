@@ -2,15 +2,12 @@ import { Type } from 'class-transformer';
 import {
   IsString,
   IsEmail,
-  IsInt,
   IsNumber,
   IsBoolean,
   IsDate,
 } from 'class-validator';
 
 export class CreateUserDto {
-  @IsInt()
-  user_id: number;
   @IsEmail()
   email: string;
   @IsString()

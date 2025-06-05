@@ -3,7 +3,7 @@
 ### Get all testimonials
 GET {{url}}
 ### Get testimonial by ID
-GET {{url}}/3
+GET {{url}}/2
 ### Create a new testimonial
 POST {{url}}
 Content-Type: application/json

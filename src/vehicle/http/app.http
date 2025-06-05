@@ -1,11 +1,13 @@
-GET http://localhost:3000/vehicle
+@url=http://localhost:3000/vehicle
+
+### get all vehicles
+GET {{url}}
 
 ### get vehicle by id
-GET http://localhost:3000/vehicle/1
-
+GET {{url}}/2
 
 ### post vehicle
-POST http://localhost:3000/vehicle
+POST {{url}}
 Content-Type: application/json
 
 {
@@ -16,10 +18,10 @@ Content-Type: application/json
   "price_per_day": 50,
   "availability": true,
   "created_at": "2023-10-01T12:00:00Z"
-
 }
+
 ### update vehicle
-PUT http://localhost:3000/vehicle/1
+PUT {{url}}/2
 Content-Type: application/json
 
 {
@@ -33,4 +35,4 @@ Content-Type: application/json
 }
 
 ### delete vehicle
-DELETE http://localhost:3000/vehicle/1
+DELETE {{url}}/1

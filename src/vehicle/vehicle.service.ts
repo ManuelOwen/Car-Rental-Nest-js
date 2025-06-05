@@ -12,9 +12,10 @@ export class VehicleService {
     private readonly vehicleRepository: Repository<Vehicle>,
   ) {}
 
-  async create(createVehicleDto: CreateVehicleDto): Promise<Vehicle> {
+  async create(createVehicleDto: CreateVehicleDto): Promise<{ message: string; vehicle: Vehicle }> {
     const vehicle = this.vehicleRepository.create(createVehicleDto);
-    return this.vehicleRepository.save(vehicle);
+    const savedVehicle = await this.vehicleRepository.save(vehicle);
+    return { message: 'Vehicle created successfully', vehicle: savedVehicle };
   }
 
   findAll() {
@@ -25,17 +26,22 @@ export class VehicleService {
     return this.vehicleRepository.findOneBy({ id });
   }
 
-  async update(id: number, dto: UpdateVehicleDto) {
+  async update(id: number, dto: UpdateVehicleDto): Promise<{ message: string; vehicle: Vehicle }> {
     const vehicle = await this.vehicleRepository.preload({ id, ...dto });
 
     if (!vehicle) {
       throw new NotFoundException(`Vehicle with ID ${id} not found`);
     }
 
-    return this.vehicleRepository.save(vehicle);
+    const updatedVehicle = await this.vehicleRepository.save(vehicle);
+    return { message: 'Vehicle updated successfully', vehicle: updatedVehicle };
   }
 
-  remove(id: number) {
-    return this.vehicleRepository.delete(id);
+  async remove(id: number): Promise<{ message: string }> {
+    const result = await this.vehicleRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Vehicle with ID ${id} not found`);
+    }
+    return { message: 'Vehicle deleted successfully' };
   }
 }

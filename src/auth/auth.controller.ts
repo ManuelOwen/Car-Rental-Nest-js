@@ -1,34 +1,58 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
+import { CreateAuthDto } from './dto/login.dto';
+import { Request } from 'express';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Public } from './decorators/public.decorator';
+import { RtGuard } from './guards';
+
+export interface RequestWithUser extends Request {
+  user: {
+    sub: number;
+    email: string;
+    refreshToken: string;
+  };
+}
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  // /auth/signin
+  @Public()
+  @Post('signin')
+  signInLocal(@Body() createAuthDto: CreateAuthDto) {
+    return this.authService.signIn(createAuthDto);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  // /auth/signout/:id
+  @Get('signout/:id')
+  signOut(@Param('id', ParseIntPipe) id: number) {
+    return this.authService.signOut(id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  // /auth/refresh?id=1
+  @Public()
+  @UseGuards(RtGuard)
+  @Get('refresh')
+  refreshTokens(
+    @Query('id', ParseIntPipe) id: number,
+    @Req() req: RequestWithUser,
+  ) {
+    const user = req.user;
+    if (user.sub !== id) {
+      throw new UnauthorizedException('Invalid user');
+    }
+    return this.authService.refreshTokens(id, user.refreshToken);
   }
 }

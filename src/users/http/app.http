@@ -1,26 +1,30 @@
 @url=http://localhost:3000
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoiaW1hbkBnbWFpbC5jb20iLCJpYXQiOjE3NDkxMTU3MTIsImV4cCI6MTc0OTExOTMxMn0.maJtDGChak2-e57JeYE72ft_U88ToOdkIs2qCthtAOY
 
 ### GET USERS
 GET {{url}}/users
+Authorization: Bearer {{token}}
 
 ### GET USER BY ID
-GET {{url}}/users/2
+GET {{url}}/users/3
+Authorization: Bearer {{token}}
 
 ### create user
-POST {{url}}/seed
-# Content-Type: application/json
+POST {{url}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
 
-# {
-#  "user_id": 1,
-#   "email": "mutaiadoe@gmail.com",
-#   "password": "password123",
-#   "first_name": "mat",
-#   "last_name": "Doe",
-#   "status": true,
-#   "phone_number": 1234567890,
-#   "profile_picture": "./images/jane_doe.jpg",
-#   "last_login": "2023-10-01T10:00:00Z"
-# }
+{
+
+  "email": "iman2@gmail.com",
+  "password": "password123",
+  "first_name": "mat",
+  "last_name": "Doe",
+  "status": true,
+  "phone_number": 1234567890,
+  "profile_picture": "./images/jane_doe.jpg",
+  "last_login": "2023-10-01T10:00:00Z"
+}
 
 ### update user
 PUT {{url}}/1

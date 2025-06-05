@@ -1,0 +1,30 @@
+@url=http://localhost:3000/vehicle-brand
+
+### get all vehicle brands
+GET {{url}}
+
+### get vehicle brand by id
+GET {{url}}/1
+
+### post vehicle brand
+POST {{url}}
+Content-Type: application/json
+
+{
+    "brand_id": 1,
+  "brand_name": "Toyota",
+  "created_at": "2025-06-05T08:54:28.034Z"
+}
+
+### update vehicle brand
+PUT {{url}}/1
+Content-Type: application/json
+
+{
+  "name": "Toyota",
+  "country": "Japan",
+  "founded": 1937
+}
+
+### delete vehicle brand
+DELETE {{url}}/1

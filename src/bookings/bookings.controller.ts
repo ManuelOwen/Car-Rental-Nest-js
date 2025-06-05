@@ -35,6 +35,7 @@ export class BookingsController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.bookingsService.remove(id);
   }
+
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,

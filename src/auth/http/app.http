@@ -1,0 +1,14 @@
+@url=http://localhost:3000
+
+# ### register user
+POST {{url}}/auth/signin
+Content-Type: application/json
+
+{
+  "email": "iman@gmail.com",
+  "password": "password123"
+}
+
+### signout user
+Get {{url}}/auth/signout/4
+

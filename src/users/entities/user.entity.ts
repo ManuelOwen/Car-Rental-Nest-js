@@ -31,6 +31,9 @@ export class user {
   @Column()
   status: boolean;
 
+  @Column({ type: 'text', nullable: true, default: null })
+  hashedRefreshToken: string | null;
+
   @Column()
   phone_number: number;
   @Column({ nullable: true })

@@ -11,20 +11,25 @@ export class BookingsService {
     @InjectRepository(Booking)
     private readonly bookingRepository: Repository<Booking>,
   ) {}
-  async create(createBookingDto: CreateBookingDto): Promise<Booking> {
+  async create(createBookingDto: CreateBookingDto): Promise<{ message: string; booking: Booking }> {
     const booking = this.bookingRepository.create(createBookingDto);
-    return this.bookingRepository.save(booking);
+    const savedBooking = await this.bookingRepository.save(booking);
+    return { message: 'Booking created successfully', booking: savedBooking };
   }
 
   findAll() {
     return this.bookingRepository.find();
   }
 
-  findOne(id: number) {
-    return this.bookingRepository.findOneBy({ id });
+  async findOne(id: number) {
+    const booking = await this.bookingRepository.findOneBy({ id });
+    if (!booking) {
+      throw new NotFoundException(`Booking with ID ${id} not found`);
+    }
+    return booking;
   }
 
-  async update(id: number, updateBookingDto: UpdateBookingDto) {
+  async update(id: number, updateBookingDto: UpdateBookingDto): Promise<{ message: string; booking: Booking }> {
     const booking = await this.bookingRepository.preload({
       id,
       ...updateBookingDto,
@@ -34,17 +39,16 @@ export class BookingsService {
       throw new NotFoundException(`Booking with ID ${id} not found`);
     }
 
-    // ✅ Save the updated entity to persist changes
-    await this.bookingRepository.save(booking);
+    const updatedBooking = await this.bookingRepository.save(booking);
 
-    return 'Booking updated successfully';
+    return { message: 'Booking updated successfully', booking: updatedBooking };
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<{ message: string }> {
     const booking = await this.bookingRepository.findOneBy({ id });
-    if (booking) {
-      await this.bookingRepository.remove(booking);
+    if (!booking) {
+      throw new NotFoundException(`Booking with ID ${id} not found`);
     }
-    return booking;
-  }
-}
+    await this.bookingRepository.remove(booking);
+    return { message: 'Booking deleted successfully' };
+  }}
