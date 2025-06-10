@@ -11,15 +11,16 @@ Authorization: Bearer {{token}}
 
 ### create user
 POST {{url}}/users
-Authorization: Bearer {{token}}
+# Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
 
-  "email": "iman2@gmail.com",
+  "email": "imao@gmail.com",
   "password": "password123",
   "first_name": "mat",
   "last_name": "Doe",
+  "role": "user",
   "status": true,
   "phone_number": 1234567890,
   "profile_picture": "./images/jane_doe.jpg",

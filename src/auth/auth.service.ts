@@ -1,11 +1,17 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateAuthDto } from './dto/login.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { user } from 'src/users/entities/user.entity';
+import { Role, user } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { Roles } from './decorators/roles.decorator';
+
 
 @Injectable()
 export class AuthService {
@@ -16,12 +22,13 @@ export class AuthService {
   ) {}
 
   // Helper method to generate access and refresh tokens for the user
-  private async getTokens(userId: number, email: string) {
+  private async getTokens(userId: number, email: string, role: string) {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
           email: email,
+          role: Roles,
         },
         {
           secret: this.configService.getOrThrow<string>(
@@ -36,6 +43,7 @@ export class AuthService {
         {
           sub: userId,
           email: email,
+          role: Role,
         },
         {
           secret: this.configService.getOrThrow<string>(
@@ -66,34 +74,34 @@ export class AuthService {
 
   // Method to sign in the user
   async signIn(createAuthDto: CreateAuthDto) {
-  const foundUser = await this.userRepository.findOne({
-    where: { email: createAuthDto.email },
-    select: ['user_id', 'email', 'password'],
-  });
-  if (!foundUser) {
-    throw new NotFoundException(
-      `User with email ${createAuthDto.email} not found`,
+    const foundUser = await this.userRepository.findOne({
+      where: { email: createAuthDto.email },
+      select: ['user_id', 'email', 'password', 'role'], // role included for authorization
+    });
+    if (!foundUser) {
+      throw new NotFoundException(
+        `User with email ${createAuthDto.email} not found`,
+      );
+    }
+    const foundPassword = await bcrypt.compare(
+      createAuthDto.password,
+      foundUser.password,
     );
+    if (!foundPassword) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    console.log(UnauthorizedException);
+    const { accessToken, refreshToken } = await this.getTokens(
+      foundUser.user_id,
+      foundUser.email,
+      foundUser.role,
+    );
+    await this.saveRefreshToken(foundUser.user_id, refreshToken);
+    return { accessToken, refreshToken };
   }
-  const foundPassword = await bcrypt.compare(
-    createAuthDto.password,
-    foundUser.password,
-  );
-  if (!foundPassword) {
-    throw new UnauthorizedException('Invalid credentials'); 
-    
-  }
-  console.log(UnauthorizedException)
-  const { accessToken, refreshToken } = await this.getTokens(
-    foundUser.user_id,
-    foundUser.email,
-  );
-  await this.saveRefreshToken(foundUser.user_id, refreshToken);
-  return { accessToken, refreshToken };
-}
 
-// Method to sign out the user
-async signOut(userId: number) {
+  // Method to sign out the user
+  async signOut(userId: number) {
     // Fixed: userId should be number for consistency
     const res = await this.userRepository.update(userId, {
       hashedRefreshToken: null,
@@ -109,7 +117,7 @@ async signOut(userId: number) {
   async refreshTokens(id: number, refreshToken: string) {
     const foundUser = await this.userRepository.findOne({
       where: { user_id: id },
-      select: ['user_id', 'email', 'hashedRefreshToken'],
+      select: ['user_id', 'email', 'role', 'hashedRefreshToken'],
     });
 
     if (!foundUser) {
@@ -131,6 +139,7 @@ async signOut(userId: number) {
     const { accessToken, refreshToken: newRefreshToken } = await this.getTokens(
       foundUser.user_id,
       foundUser.email,
+      foundUser.role,
     );
     await this.saveRefreshToken(foundUser.user_id, newRefreshToken);
     return { accessToken, refreshToken: newRefreshToken };

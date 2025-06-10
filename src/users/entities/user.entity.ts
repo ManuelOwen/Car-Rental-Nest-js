@@ -11,6 +11,13 @@ import {
 import { Vehicle } from '../../vehicle/entities/vehicle.entity';
 import { Testimonial } from 'src/testimonials/entities/testimonial.entity';
 
+// defining user roles for authorization
+export enum Role {
+  USER = 'user',
+  GUEST = 'guest',
+  ADMIN = 'admin',
+}
+
 @Entity('user')
 export class user {
   @PrimaryGeneratedColumn()
@@ -28,6 +35,13 @@ export class user {
   @Column()
   last_name: string;
 
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
+
   @Column()
   status: boolean;
 
@@ -36,6 +50,7 @@ export class user {
 
   @Column()
   phone_number: number;
+  
   @Column({ nullable: true })
   profile_picture: string;
 

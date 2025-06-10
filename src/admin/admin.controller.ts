@@ -41,12 +41,12 @@ export class AdminController {
   }
   // update an admin
   @Put(':id')
-updateAdmin(
-  @Param('id', ParseIntPipe) id: number,
-  @Body() CreateAdminDto: CreateAdminDto,
-): { message: string; admin?: IAdmin } {
-  return this.adminService.updateAdmin(id, CreateAdminDto);
-}
+  updateAdmin(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() CreateAdminDto: CreateAdminDto,
+  ): { message: string; admin?: IAdmin } {
+    return this.adminService.updateAdmin(id, CreateAdminDto);
+  }
   // delete an admin
   @Delete(':id')
   deleteAdmin(@Param('id', ParseIntPipe) id: number): string {

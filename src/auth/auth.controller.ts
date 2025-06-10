@@ -15,6 +15,7 @@ import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { RtGuard } from './guards';
+import { Auth } from './entities/auth.entity';
 
 export interface RequestWithUser extends Request {
   user: {
@@ -23,8 +24,8 @@ export interface RequestWithUser extends Request {
     refreshToken: string;
   };
 }
-
-@Controller('auth')
+  
+@Controller('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

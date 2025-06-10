@@ -63,15 +63,18 @@ export class AdminService {
     this.admin.push(newAdmin);
     return newAdmin;
   }
-  updateAdmin(id: number, adminData: UpdateAdminDto): { message: string; admin?: IAdmin } {
-  const adminIndex = this.admin.findIndex((admin) => admin.admin_id === id);
-  if (adminIndex === -1) {
-    return { message: 'Admin not found' };
+  updateAdmin(
+    id: number,
+    adminData: UpdateAdminDto,
+  ): { message: string; admin?: IAdmin } {
+    const adminIndex = this.admin.findIndex((admin) => admin.admin_id === id);
+    if (adminIndex === -1) {
+      return { message: 'Admin not found' };
+    }
+    const updatedAdmin = { ...this.admin[adminIndex], ...adminData };
+    this.admin[adminIndex] = updatedAdmin;
+    return { message: 'Admin updated successfully', admin: updatedAdmin };
   }
-  const updatedAdmin = { ...this.admin[adminIndex], ...adminData };
-  this.admin[adminIndex] = updatedAdmin;
-  return { message: 'Admin updated successfully', admin: updatedAdmin };
-}
   // delete an admin
   deleteAdmin(id: number): string {
     const adminIndex = this.admin.findIndex((admin) => admin.admin_id === id);

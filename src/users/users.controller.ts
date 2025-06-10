@@ -12,27 +12,31 @@ import {
 import { userService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
-import { user } from './entities/user.entity';
+import { Role, user } from './entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 
 // implement pipes
 import { ParseIntPipe } from '@nestjs/common';
+import { Public, Roles } from 'src/auth/decorators';
 
-@UseGuards(AuthGuard('jwt')) 
+// @UseGuards(AuthGuard('jwt'))
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: userService) {}
   // get all users
+  @Roles(Role.ADMIN) // only the admin can get all the users
   @Get()
   async findAllUsers(): Promise<user[]> {
     return this.usersService.findAll();
   }
   // get user by searching
+  @Roles(Role.ADMIN, Role.USER) // only the Admin and the user have authorization access
   @Get('search')
   async searchUsers(@Query('q') q: string): Promise<user[]> {
     return this.usersService.searchUsers(q);
   }
   // get user by id
+  @Roles(Role.ADMIN)
   @Get(':id')
   async getUserById(
     @Param('id', ParseIntPipe) id: number,
@@ -41,11 +45,13 @@ export class UsersController {
     return this.usersService.getUserById(id);
   }
   // create a new user
+  @Public()
   @Post()
   create(@Body() createUserDto: CreateUserDto): Promise<user> {
     return this.usersService.createUser(createUserDto);
   }
   // update a user
+  @Roles(Role.ADMIN, Role.USER)
   @Put(':id')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
@@ -55,6 +61,7 @@ export class UsersController {
     return this.usersService.updateUser(id, userData);
   }
   // delete a user
+  @Roles(Role.ADMIN)
   @Delete(':id')
   async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<string> {
     // const parsedId =parseInt(id, 10);

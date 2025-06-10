@@ -15,13 +15,13 @@ export class userService {
   ) {}
   // create a new user
   async createUser(createUserDto: CreateUserDto): Promise<user> {
-  const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-  const newUser = this.userRepository.create({
-    ...createUserDto,
-    password: hashedPassword,
-  });
-  return this.userRepository.save(newUser);
-}
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const newUser = this.userRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
+    return this.userRepository.save(newUser);
+  }
   // get all users
   async findAll(): Promise<user[]> {
     return this.userRepository.find();

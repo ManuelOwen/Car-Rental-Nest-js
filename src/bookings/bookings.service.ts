@@ -11,7 +11,9 @@ export class BookingsService {
     @InjectRepository(Booking)
     private readonly bookingRepository: Repository<Booking>,
   ) {}
-  async create(createBookingDto: CreateBookingDto): Promise<{ message: string; booking: Booking }> {
+  async create(
+    createBookingDto: CreateBookingDto,
+  ): Promise<{ message: string; booking: Booking }> {
     const booking = this.bookingRepository.create(createBookingDto);
     const savedBooking = await this.bookingRepository.save(booking);
     return { message: 'Booking created successfully', booking: savedBooking };
@@ -29,7 +31,10 @@ export class BookingsService {
     return booking;
   }
 
-  async update(id: number, updateBookingDto: UpdateBookingDto): Promise<{ message: string; booking: Booking }> {
+  async update(
+    id: number,
+    updateBookingDto: UpdateBookingDto,
+  ): Promise<{ message: string; booking: Booking }> {
     const booking = await this.bookingRepository.preload({
       id,
       ...updateBookingDto,
@@ -51,4 +56,5 @@ export class BookingsService {
     }
     await this.bookingRepository.remove(booking);
     return { message: 'Booking deleted successfully' };
-  }}
+  }
+}

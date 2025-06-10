@@ -41,11 +41,11 @@ export class GuestUsersService {
       phone_number: 9876543210,
     },
   ];
-// get all guest users
+  // get all guest users
   findAll() {
     return this.guestUsers;
   }
-// get guest user by id
+  // get guest user by id
   findOne(id: number, parseIntPipe: ParseIntPipe) {
     const guestUser = this.guestUsers.find((user) => user.guest_id === id);
     if (!guestUser) {
@@ -55,38 +55,38 @@ export class GuestUsersService {
   }
   // create guest user
   create(createGuestUserDto: CreateGuestUserDto) {
-  const newGuestUser = {
-    ...createGuestUserDto,
-  };
-  this.guestUsers.push(newGuestUser);
-  return {
-    message: 'Guest user created successfully',
-    guest: newGuestUser,
-  };
-}
-
-updateGuest(id: number, updateGuestUserDto: UpdateGuestUserDto) {
-  const userIndex = this.guestUsers.findIndex((user) => user.guest_id === id);
-  if (userIndex !== -1) {
-    this.guestUsers[userIndex] = {
-      ...this.guestUsers[userIndex],
-      ...updateGuestUserDto,
+    const newGuestUser = {
+      ...createGuestUserDto,
     };
+    this.guestUsers.push(newGuestUser);
     return {
-      message: 'Guest user updated successfully',
-      guest: this.guestUsers[userIndex],
+      message: 'Guest user created successfully',
+      guest: newGuestUser,
     };
   }
-  return { message: 'Guest user not found' };
-}
 
-//  delete guest user
-deleteGuest(id: number): { message: string } {
-  const userIndex = this.guestUsers.findIndex((user) => user.guest_id === id);
-  if (userIndex !== -1) {
-    this.guestUsers.splice(userIndex, 1);
-    return { message: 'Guest user deleted successfully' };
+  updateGuest(id: number, updateGuestUserDto: UpdateGuestUserDto) {
+    const userIndex = this.guestUsers.findIndex((user) => user.guest_id === id);
+    if (userIndex !== -1) {
+      this.guestUsers[userIndex] = {
+        ...this.guestUsers[userIndex],
+        ...updateGuestUserDto,
+      };
+      return {
+        message: 'Guest user updated successfully',
+        guest: this.guestUsers[userIndex],
+      };
+    }
+    return { message: 'Guest user not found' };
   }
-  return { message: 'Guest user not found' };
-}
+
+  //  delete guest user
+  deleteGuest(id: number): { message: string } {
+    const userIndex = this.guestUsers.findIndex((user) => user.guest_id === id);
+    if (userIndex !== -1) {
+      this.guestUsers.splice(userIndex, 1);
+      return { message: 'Guest user deleted successfully' };
+    }
+    return { message: 'Guest user not found' };
+  }
 }

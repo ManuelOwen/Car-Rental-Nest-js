@@ -12,7 +12,9 @@ export class VehicleService {
     private readonly vehicleRepository: Repository<Vehicle>,
   ) {}
 
-  async create(createVehicleDto: CreateVehicleDto): Promise<{ message: string; vehicle: Vehicle }> {
+  async create(
+    createVehicleDto: CreateVehicleDto,
+  ): Promise<{ message: string; vehicle: Vehicle }> {
     const vehicle = this.vehicleRepository.create(createVehicleDto);
     const savedVehicle = await this.vehicleRepository.save(vehicle);
     return { message: 'Vehicle created successfully', vehicle: savedVehicle };
@@ -26,7 +28,10 @@ export class VehicleService {
     return this.vehicleRepository.findOneBy({ id });
   }
 
-  async update(id: number, dto: UpdateVehicleDto): Promise<{ message: string; vehicle: Vehicle }> {
+  async update(
+    id: number,
+    dto: UpdateVehicleDto,
+  ): Promise<{ message: string; vehicle: Vehicle }> {
     const vehicle = await this.vehicleRepository.preload({ id, ...dto });
 
     if (!vehicle) {
