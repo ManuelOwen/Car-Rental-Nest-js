@@ -8,63 +8,68 @@ import {
   Query,
   Put,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { userService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-
 import { Role, user } from './entities/user.entity';
-import { AuthGuard } from '@nestjs/passport';
-
-// implement pipes
-import { ParseIntPipe } from '@nestjs/common';
 import { Public, Roles } from 'src/auth/decorators';
+import { AtGuard } from 'src/auth/token/token.guard';
+import { RolesGuard } from 'src/auth/guards';
 
-// @UseGuards(AuthGuard('jwt'))
+import { ApiBearerAuth } from '@nestjs/swagger';
+// import { Throttle } from '@nestjs/throttler';
+ // Limit to 3 requests per 20 seconds
 @Controller('users')
+@ApiBearerAuth()
+@UseGuards(AtGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: userService) {}
+
   // get all users
-  @Roles(Role.ADMIN) // only the admin can get all the users
+  // @Throttle(3, 60)
   @Get()
+  @Roles(Role.ADMIN)
   async findAllUsers(): Promise<user[]> {
     return this.usersService.findAll();
   }
   // get user by searching
-  @Roles(Role.ADMIN, Role.USER) // only the Admin and the user have authorization access
   @Get('search')
+  @Roles(Role.ADMIN, Role.USER)
   async searchUsers(@Query('q') q: string): Promise<user[]> {
     return this.usersService.searchUsers(q);
   }
+
   // get user by id
-  @Roles(Role.ADMIN)
   @Get(':id')
+  @Roles(Role.ADMIN)
   async getUserById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<user | null> {
-    // const parsedId = parseInt(id, 10);
     return this.usersService.getUserById(id);
   }
+
   // create a new user
-  @Public()
   @Post()
+  @Public()
   create(@Body() createUserDto: CreateUserDto): Promise<user> {
     return this.usersService.createUser(createUserDto);
   }
+
   // update a user
-  @Roles(Role.ADMIN, Role.USER)
   @Put(':id')
+  @Roles(Role.ADMIN, Role.USER)
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() userData: Partial<user>,
   ): Promise<user | null> {
-    // const parsedId = parseInt(id, 10);
     return this.usersService.updateUser(id, userData);
   }
+
   // delete a user
-  @Roles(Role.ADMIN)
   @Delete(':id')
+  @Roles(Role.ADMIN)
   async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<string> {
-    // const parsedId =parseInt(id, 10);
     return this.usersService.deleteUser(id);
   }
 }

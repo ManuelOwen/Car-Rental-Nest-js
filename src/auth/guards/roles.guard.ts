@@ -7,7 +7,7 @@ import { user } from '../../users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { JWTPayload } from '../../auth/guards/at.guards';
-import { Observable } from 'rxjs';
+// import { Observable } from 'rxjs';
 
 interface UserRequest extends Request {
   user?: JWTPayload;

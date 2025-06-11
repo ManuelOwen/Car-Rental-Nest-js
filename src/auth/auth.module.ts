@@ -10,7 +10,7 @@ import { JwtStrategy } from './jwt.strategy';
 @Module({
   imports: [TypeOrmModule.forFeature([user]), JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, AtStrategy, JwtStrategy,RolesGuard],
-  exports:[RolesGuard]
+  providers: [AuthService, AtStrategy, JwtStrategy, RolesGuard],
+  exports: [RolesGuard],
 })
 export class AuthModule {}

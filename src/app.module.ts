@@ -5,24 +5,35 @@ import { GuestUsersModule } from './guest_users/guest_users.module';
 import { LoggerMiddleware } from './logger.middleware';
 import { VehicleBrandModule } from './vehicle_brand/vehicle_brand.module';
 import { VehicleModule } from './vehicle/vehicle.module';
-// import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
-// import databaseConfig from './database/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/db.config';
 import { SeedModule } from './seed/seed.module';
-
 import { BookingsModule } from './bookings/bookings.module';
 import { TestimonialsModule } from './testimonials/testimonials.module';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
-
 import { ConfigService, ConfigModule } from '@nestjs/config';
-// import { CacheMeModule } from './cache-me/cache-me.module';
 import { AuthModule } from './auth/auth.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { CustomThrottlerGuard } from './throttler.guard';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     TypeOrmModule.forRoot(typeOrmConfig),
+  ThrottlerModule.forRoot({
+    throttlers:[
+      {
+        ttl: 30000,
+        limit: 3,
+      },
+    ],
+  }),
+    
     DatabaseModule,
     UsersModule,
     AdminModule,
@@ -31,33 +42,29 @@ import { AuthModule } from './auth/auth.module';
     VehicleModule,
     SeedModule,
     BookingsModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-      // load: [databaseConfig],
-    }),
     TestimonialsModule,
     CacheModule.registerAsync({
       isGlobal: true,
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        ttl: 60000, // time to live in milliseconds
-
-        // To use Redis, install 'cache-manager-redis-store' and uncomment below:
-        store: await import('cache-manager-redis-store').then(
-          (m) => m.redisStore,
-        ),
-        url: configService.getOrThrow<string>('REDIS_URL'),
+        ttl: configService.get<number>('CACHE_TTL', 60000),
+        store: configService.get<string>('REDIS_URL')
+          ? await import('cache-manager-redis-store').then((m) => m.redisStore)
+          : 'memory',
+        url: configService.get<string>('REDIS_URL'),
       }),
     }),
     AuthModule,
-    // CacheMeModule,
   ],
   controllers: [],
   providers: [
     {
-      provide: 'APP_INTERCEPTOR',
+      provide: APP_INTERCEPTOR,
       useClass: CacheInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: CustomThrottlerGuard,
     },
   ],
 })

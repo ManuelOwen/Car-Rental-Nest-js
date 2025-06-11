@@ -50,7 +50,7 @@ export class user {
 
   @Column()
   phone_number: number;
-  
+
   @Column({ nullable: true })
   profile_picture: string;
 

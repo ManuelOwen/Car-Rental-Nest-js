@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsDate, IsBoolean } from 'class-validator';
+import { IsInt, IsDate } from 'class-validator';
 
 export class CreateBookingDto {
   @IsInt()
@@ -12,8 +12,6 @@ export class CreateBookingDto {
   @Type(() => Date)
   booking_date: Date;
 
-  @IsBoolean()
-  status: boolean;
   @IsInt()
   booking_id: number;
   @IsDate()

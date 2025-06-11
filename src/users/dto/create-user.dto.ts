@@ -5,7 +5,7 @@ import {
   IsNumber,
   IsBoolean,
   IsDate,
-  IsEnum
+  IsEnum,
 } from 'class-validator';
 import { Role } from '../entities/user.entity';
 
@@ -20,7 +20,7 @@ export class CreateUserDto {
   last_name: string;
   @IsNumber()
   phone_number: number;
- @IsEnum(Role)
+  @IsEnum(Role)
   role: Role;
 
   @IsBoolean()

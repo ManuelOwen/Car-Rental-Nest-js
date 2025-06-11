@@ -12,7 +12,6 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Roles } from './decorators/roles.decorator';
 
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -22,7 +21,7 @@ export class AuthService {
   ) {}
 
   // Helper method to generate access and refresh tokens for the user
-  private async getTokens(userId: number, email: string, role: string) {
+  private async getTokens(userId: number, email: string, Role: Role) {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {

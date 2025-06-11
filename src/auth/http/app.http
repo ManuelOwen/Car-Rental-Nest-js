@@ -1,11 +1,11 @@
-@url=http://localhost:3000
+@url=http://localhost:3000/api/v1
 
 # ### register user
 POST {{url}}/auth/signin
 Content-Type: application/json
 
 {
-  "email": "iman2@gmail.com",
+  "email": "kiptoo@gmail.com",
   "password": "password123"
 }
 
