@@ -1,36 +1,81 @@
-version: '3.8'
 
 services:
-  user-management-db:
+  owen-nest-db:
     image: postgres:15-alpine
-    container_name: Nest-Type-orm
+    container_name: vehicle-nest-db2
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres      
-      POSTGRES_PASSWORD: 1234      
-      POSTGRES_DB: manu            
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: manu
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data  
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5  
 
   redis:
-    image: redis:8.0-alpine
-    container_name: redis-cache
-    restart: unless-stopped
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+      image: redis:8.0-alpine
+      container_name: redis-cache
+      restart: unless-stopped
+      command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+      ports:
+        - "6379:6379"
+      volumes:
+        - redis-data:/data
+      networks:
+        - app-network
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+  nestjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vehicle-nest
     ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
+      - "8000:8000"
+    environment:
+      - NODE_ENV=development
+      - PORT=8000
+      - DB_HOST=owen-nest-db
+      - DB_PORT=5432
+      - DB_NAME=manu
+      - DB_USER=postgres
+      - DB_PASSWORD=1234
+      - DB_SYNC=true
+      - DB_LOGGING=true
+      - DB_AUTOLOAD=true
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-your_secure_redis_password}@redis:6379
+      - JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET:-your_access_token_secret}
+      - JWT_ACCESS_TOKEN_EXPIRATION_TIME=${JWT_ACCESS_TOKEN_EXPIRATION_TIME:-15m}
+      - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET:-your_refresh_token_secret}
+      - JWT_REFRESH_TOKEN_EXPIRATION_TIME=${JWT_REFRESH_TOKEN_EXPIRATION_TIME:-7d}
+      - THROTTLE_TTL=${THROTTLE_TTL:-6000}
+      - THROTTLE_LIMIT=${THROTTLE_LIMIT:-100}
+    depends_on:
+      redis:
+        condition: service_healthy
+      owen-nest-db:
+        condition: service_healthy
     networks:
       - app-network
+    volumes:
+      # - .:/app
+      # - /app/node_modules      
 
 volumes:
   pgdata:
-    name: manu-db-data
+    name: vehicle-nest
     driver: local
   redis-data:
     name: redis-cache-data
