@@ -69,9 +69,7 @@ services:
         condition: service_healthy
     networks:
       - app-network
-    volumes:
-      # - .:/app
-      # - /app/node_modules      
+      
 
 volumes:
   pgdata:
